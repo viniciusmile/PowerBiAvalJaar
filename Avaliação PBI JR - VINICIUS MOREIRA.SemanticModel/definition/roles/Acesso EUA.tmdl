@@ -1,0 +1,9 @@
+role 'Acesso EUA'
+	modelPermission: read
+
+	tablePermission dLocalidades = [Pais] == "United States"
+
+	tablePermission dSeguranca
+
+	annotation PBI_Id = a2f9205c21ff40dbbfc8d3787fcf675a
+

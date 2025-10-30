@@ -1,0 +1,112 @@
+table dLojas
+	lineageTag: 894d32a7-7ec3-4372-95a6-5b092b53c81f
+
+	column IdLoja
+		dataType: int64
+		formatString: 0
+		lineageTag: d431fb28-f37b-473e-9bdb-671834eadd4c
+		summarizeBy: none
+		sourceColumn: IdLoja
+
+		annotation SummarizationSetBy = Automatic
+
+	column IdLocalidade
+		dataType: int64
+		formatString: 0
+		lineageTag: efc6f94a-3aec-4430-ab5e-38e3301be9c9
+		summarizeBy: none
+		sourceColumn: IdLocalidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoLoja
+		dataType: string
+		lineageTag: a6c56576-4e00-471e-82aa-ecd91e7e6dfa
+		summarizeBy: none
+		sourceColumn: TipoLoja
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: e7f2b78b-497d-4361-96d3-1bb068b0ca9a
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataAbertura
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: e66121e7-35a6-41b0-8d8d-58813c40bc4b
+		summarizeBy: none
+		sourceColumn: DataAbertura
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column DataFechamento
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 5c71d6fe-60f4-4e06-9b14-2a2bc5726e38
+		summarizeBy: none
+		sourceColumn: DataFechamento
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column RazaoFechamento
+		dataType: string
+		lineageTag: 69ced027-55ba-41a3-bbff-9fbf740e1227
+		summarizeBy: none
+		sourceColumn: RazaoFechamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column NumeroDeFuncionarios
+		dataType: int64
+		formatString: 0
+		lineageTag: c5e0677d-973a-4909-9950-6fd34d13f6bc
+		summarizeBy: sum
+		sourceColumn: NumeroDeFuncionarios
+
+		annotation SummarizationSetBy = Automatic
+
+	column TamanhoDaLoja
+		dataType: double
+		lineageTag: 8ed66512-3d12-40fd-abd6-ac4052236354
+		summarizeBy: sum
+		sourceColumn: TamanhoDaLoja
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dLojas-ef8d6172-bb1b-40f4-9d4a-7b69ba34dec8 = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_DimStore = Source{[Schema="dbo",Item="DimStore"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimStore,{"GeoLocation", "Geometry", "ETLLoadID", "LoadDate", "UpdateDate", "DimGeography", "DimMachine", "FactITSLA", "FactInventory", "FactOnlineSales", "FactSales", "FactSalesQuota", "LastRemodelDate", "AddressLine2", "StoreFax", "StorePhone", "ZipCodeExtension", "StoreDescription", "StoreManager", "AddressLine1", "StoreName", "EntityKey", "ZipCode"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"StoreKey", "IdLoja"}, {"GeographyKey", "IdLocalidade"}, {"StoreType", "TipoLoja"}, {"OpenDate", "DataAbertura"}, {"CloseDate", "DataFechamento"}, {"CloseReason", "RazaoFechamento"}, {"EmployeeCount", "NumeroDeFuncionarios"}, {"SellingAreaSize", "TamanhoDaLoja"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"DataFechamento", type date}, {"DataAbertura", type date}})
+				in
+				    #"Changed Type"
+
+	changedProperty = Name
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

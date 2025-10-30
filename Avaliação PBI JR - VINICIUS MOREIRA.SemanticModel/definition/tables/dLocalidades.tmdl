@@ -1,0 +1,69 @@
+table dLocalidades
+	lineageTag: 0e602a7d-5785-4219-a6d8-ea055835c134
+
+	column IdLocalidade
+		dataType: int64
+		formatString: 0
+		lineageTag: 23735549-0dbb-4960-a5ab-786e6e3805c1
+		summarizeBy: none
+		sourceColumn: IdLocalidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoLocalidade
+		dataType: string
+		lineageTag: 702ac03b-751e-4804-b725-8500149230f6
+		summarizeBy: none
+		sourceColumn: TipoLocalidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continente
+		dataType: string
+		lineageTag: cee73bec-881a-4d7d-a429-157aa7e3554f
+		summarizeBy: none
+		sourceColumn: Continente
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cidade
+		dataType: string
+		lineageTag: 83572e31-c7fd-46a4-9733-2cbd58c88ea1
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estado
+		dataType: string
+		lineageTag: ce8cbb31-4c29-486f-826c-d621f149c4c0
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	column Pais
+		dataType: string
+		lineageTag: 84fadf8d-9131-4fa5-8b28-79f148267fc8
+		summarizeBy: none
+		sourceColumn: Pais
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dLocalidades-3f8c7195-336d-4beb-95e9-b0f6d8d057d4 = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_DimGeography = Source{[Schema="dbo",Item="DimGeography"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimGeography,{"Geometry", "ETLLoadID", "LoadDate", "UpdateDate", "DimCustomer", "DimSalesTerritory", "DimStore"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"GeographyKey", "IdLocalidade"}, {"GeographyType", "TipoLocalidade"}, {"ContinentName", "Continente"}, {"CityName", "Cidade"}, {"StateProvinceName", "Estado"}, {"RegionCountryName", "Pais"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,38 @@
+relationship fb231d42-6b02-9c60-4553-8f1c4be57528
+	fromColumn: fVendas.IdProduto
+	toColumn: dProdutos.IdProduto
+
+relationship 7da33067-3e16-345b-eb4f-8e6566ab578a
+	fromColumn: dProdutos.IdSubcategoria
+	toColumn: dSubCategoriaProdutos.IdSubcategoria
+
+relationship 75842313-6032-e395-cae2-cd03c97725dc
+	fromColumn: dSubCategoriaProdutos.IdCategoria
+	toColumn: dCategoriaProdutos.IdCategoria
+
+relationship 017af925-001b-2ad3-c041-90582202e626
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: dIconesProdutos.Categoria
+	toColumn: dCategoriaProdutos.Categoria
+
+relationship 85f6516c-a73b-cae3-1b9e-9c1163dc7058
+	fromColumn: fVendas.IdPromocao
+	toColumn: dPromocoes.IdPromocao
+
+relationship 5eb222a7-f405-d78c-5c1a-1e049e96b58d
+	fromColumn: fVendas.IdLoja
+	toColumn: dLojas.IdLoja
+
+relationship f83569fb-4b50-58ff-3333-c73565dd9e6b
+	fromColumn: dLojas.IdLocalidade
+	toColumn: dLocalidades.IdLocalidade
+
+relationship f8b67e12-f92a-267c-4b0f-5fedb9a75543
+	fromColumn: fVendas.Data
+	toColumn: dCalendario.Data
+
+relationship 1a241328-bf60-73f0-f9f8-aabaa73bbd22
+	fromColumn: dLocalidades.Pais
+	toColumn: dSeguranca.Pais
+

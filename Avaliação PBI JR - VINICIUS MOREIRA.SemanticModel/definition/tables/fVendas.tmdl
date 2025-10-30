@@ -1,0 +1,388 @@
+table fVendas
+	lineageTag: 248dc703-3afe-472c-80ee-ed37913eabce
+
+	measure 'Número de Vendas' = DISTINCTCOUNT(fVendas[CodigoVenda])
+		formatString: #,0
+		lineageTag: 9b964b4a-b72d-4675-9b0c-d388f5e25c2d
+
+	measure 'Volume vendido' = ```
+			SUM(fVendas[Quantidade])
+			
+			```
+		formatString: #,0
+		lineageTag: aa387437-9144-4dd9-aac4-5674101b713b
+
+	measure 'Vendas Brutas' =
+			
+			SUMX(
+			    fVendas,
+			    fVendas[Quantidade] * fVendas[PrecoUnitario]
+			)
+		formatString: #,0
+		lineageTag: b4fec9bc-c314-41b7-bf66-dc87890347b2
+
+	measure 'Custo total' = ```
+			SUMX(fVendas, fVendas[Quantidade] * fVendas[CustoUnitario])
+			
+			```
+		formatString: #,0
+		lineageTag: ba19018e-16c9-4c78-9dbc-6afca779fa77
+
+	measure 'Preço médio de venda' =
+			
+			DIVIDE(
+			    SUMX(fVendas, fVendas[PrecoUnitario] * fVendas[Quantidade]),
+			    SUM(fVendas[Quantidade])
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: b1b10417-f1de-4e0d-9ee6-148a9eb6f957
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Desconto total' = ```
+			
+			SUMX(
+			    fVendas,
+			    fVendas[PrecoUnitario] * 
+			    fVendas[Quantidade] * 
+			    RELATED(dPromocoes[PercentualDescontoNum])
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: df40dc58-04fb-42b7-a79a-79fa7968ed7e
+
+	measure 'Desconto total auditado' = ```
+			
+			SUMX (
+			    FILTER (
+			        fVendas,
+			        RELATED(dPromocoes[DataInicio]) <= fVendas[Data] &&
+			        RELATED(dPromocoes[DataTermino]) >= fVendas[Data]
+			    ),
+			    fVendas[PrecoUnitario] * fVendas[Quantidade] * RELATED(dPromocoes[PercentualDescontoNum]) 
+			)
+			```
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		lineageTag: 4c2fcbb9-64f3-4f1e-8311-5dc876333f60
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Vendas líquidas' =
+			
+			[Vendas Brutas]- [Desconto total]
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		lineageTag: aa472800-dda4-4a46-a11f-4655f3e4d234
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Média de vendas brutas diárias' =
+			
+			AVERAGEX (
+			    VALUES (dCalendario[Data]),
+			    CALCULATE ([Vendas Brutas])
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		lineageTag: 740e11ca-2e8a-4f19-8d5f-62e80c09baab
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Vendas brutas LY' =
+			
+			VAR VendasAtuais = [Vendas Brutas]
+			VAR VendasLY =
+			    CALCULATE(
+			        [Vendas Brutas],
+			        SAMEPERIODLASTYEAR( 'dCalendario'[Data] )
+			    )
+			RETURN
+			    IF(
+			        NOT ISBLANK( VendasAtuais ),
+			        VendasLY,
+			        BLANK()
+			    )
+		lineageTag: d2dc476c-25e2-40ea-b321-edae932da66f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Vendas brutas LY' =
+			
+			DIVIDE(
+			    [Vendas Brutas] - [Vendas brutas LY],
+			    [Vendas brutas LY]
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 18c2ea67-3c42-4d6a-b372-74975ee30fc4
+
+	measure 'Vendas brutas YTD' =
+			
+			TOTALYTD(
+			    [Vendas Brutas],
+			    dCalendario[Data]
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 7a650236-4303-4fb0-a891-2f14588002be
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Vendas brutas LY Exato' =
+			
+			
+			// 1. Declarar TODAS as variáveis primeiro
+			VAR UltimaDataVendaNoContexto =
+			    MAX ( fVendas[Data] )
+			
+			VAR DataInicioPeriodoAtual =
+			    MIN ( 'dCalendario'[Data] )
+			
+			VAR PeriodoLYEquivalente =
+			    DATESBETWEEN (
+			        'dCalendario'[Data],
+			        EDATE ( DataInicioPeriodoAtual, -12 ), // Data de início LY
+			        EDATE ( UltimaDataVendaNoContexto, -12 ) // Data de fim LY (parcial)
+			    )
+			
+			// 2. Agora, usar o RETURN com a lógica IF
+			RETURN
+			IF (
+			    // Se não houver vendas no mês atual (ex: um mês futuro), não mostre nada.
+			    ISBLANK ( UltimaDataVendaNoContexto ),
+			    BLANK (),
+			
+			    // Se houver vendas, calcule o período LY equivalente
+			    CALCULATE ( [Vendas Brutas], PeriodoLYEquivalente )
+			)
+		formatString: #,0
+		lineageTag: 4e072d87-9b24-41cc-901a-c7d33195f3d2
+
+	measure '% Share vendas brutas Categoria Produtos' =
+			
+			DIVIDE(
+			    [Vendas Brutas],
+			    CALCULATE(
+			        [Vendas Brutas],
+			        ALL( 'dCategoriaProdutos' )
+			    )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: c0310082-b316-4368-9803-38d8f32c7b5b
+
+	measure '% Share vendas brutas Genérico' =
+			
+			DIVIDE(
+			    [Vendas Brutas],
+			    CALCULATE(
+			        [Vendas Brutas],
+			        ALL()
+			    )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 23b811dc-b782-4652-a136-a0a06e914b11
+
+	measure '% Share vendas brutas Agrupável' =
+			
+			VAR Numerador = [Vendas Brutas]
+			VAR Denominador =
+			    IF(
+			        ISINSCOPE( 'dCategoriaProdutos'[Categoria] ),
+			        -- Se estiver no nível Categoria, o denominador é o total do Continente
+			        CALCULATE(
+			            [Vendas Brutas],
+			            ALL( 'dCategoriaProdutos' )
+			        ),
+			        -- Se estiver no nível Continente, o denominador é o Total Geral
+			        CALCULATE(
+			            [Vendas Brutas],
+			            ALL( 'dLocalidades' )
+			        )
+			    )
+			RETURN
+			    DIVIDE( Numerador, Denominador )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: fadadacc-65cd-42d0-b9f1-609548307939
+
+	measure 'Ranking promoções' = ```
+			
+			IF(
+			    ISINSCOPE( 'dPromocoes'[Promocao] ),
+			    
+			    // 1. Captura as vendas da linha atual no visual
+			    VAR VendasLinhaAtual = [Vendas líquidas]
+			    
+			    // 2. Cria uma tabela virtual de TODAS as promoções (agrupadas por nome) 
+			    //    e calcula as Vendas Líquidas para cada uma
+			    VAR TabelaResumo =
+			        ADDCOLUMNS(
+			            ALL( 'dPromocoes'[Promocao] ),
+			            "@Vendas", [Vendas líquidas]
+			        )
+			        
+			    // 3. Conta quantas promoções na tabela virtual têm vendas MAIORES que a linha atual
+			    VAR Ranking =
+			        COUNTROWS(
+			            FILTER(
+			                TabelaResumo,
+			                [@Vendas] > VendasLinhaAtual
+			            )
+			        ) + 1 // Adiciona 1 para obter o ranking
+			        
+			    RETURN
+			        Ranking,
+			        
+			    BLANK() // Retorna vazio para a linha Total
+			)
+			```
+		formatString: 0
+		lineageTag: 9873b2b3-2cad-465b-bad0-c734bd9b404d
+
+	measure '% Share top 10 produtos' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        [Vendas Brutas],
+			        TOPN(
+			            10,
+			            VALUES( 'dProdutos'[IdProduto] ),
+			            [Vendas Brutas],
+			            DESC
+			        )
+			    ),
+			    [Vendas Brutas]
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 2b22cd99-b6d5-4e34-b826-de817bdd3400
+
+	measure 'Lucro Bruto (Apenas Promoções)' =
+			
+			CALCULATE(
+			    [Lucro Bruto],
+			    KEEPFILTERS(dPromocoes[Promocao] <> "No Discount")
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 1e7901f7-1596-4201-aa0c-23fe7d1e4bf7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Lucro Bruto' = [Vendas Líquidas] - [Custo total]
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 3d865d77-657e-4ee7-bde0-45f25555a66f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Margem de Lucro %' = DIVIDE([Lucro Bruto], [Vendas Brutas])
+		formatString: 0%;-0%;0%
+		lineageTag: 4be5b8b6-8acb-4f67-9a93-c31a5a6bc79c
+
+	measure 'Lucro Bruto LY' =
+			
+			CALCULATE(
+			    [Lucro Bruto],
+			    SAMEPERIODLASTYEAR(dCalendario[Data])
+			)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: cc4bdf65-7929-4c97-8d6c-f9959a07ae7a
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 6c18ca18-c507-4961-8626-f896c55b5ac0
+		summarizeBy: none
+		sourceColumn: Data
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column IdProduto
+		dataType: int64
+		formatString: 0
+		lineageTag: 685d27f5-4ab5-4b6d-b0ce-5416adc0447b
+		summarizeBy: none
+		sourceColumn: IdProduto
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustoUnitario
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 4ee34377-07d7-46cd-b7ff-bab261dff4d5
+		summarizeBy: sum
+		sourceColumn: CustoUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column PrecoUnitario
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: f8e13dc2-5039-4b66-a29b-eda0bba9ec43
+		summarizeBy: sum
+		sourceColumn: PrecoUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column Quantidade
+		dataType: int64
+		formatString: 0
+		lineageTag: b419dc31-dd16-45ae-8a8e-6922325e047d
+		summarizeBy: sum
+		sourceColumn: Quantidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column IdPromocao
+		dataType: int64
+		formatString: 0
+		lineageTag: d938f7a1-a22e-4b58-8426-f34e0fe7f49e
+		summarizeBy: none
+		sourceColumn: IdPromocao
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoVenda
+		dataType: int64
+		formatString: 0
+		lineageTag: 9dc65fbe-e4a8-4f11-a1b4-2993e2b3759b
+		summarizeBy: sum
+		sourceColumn: CodigoVenda
+
+		annotation SummarizationSetBy = Automatic
+
+	column IdLoja
+		dataType: int64
+		formatString: 0
+		lineageTag: e69be4e4-efcb-4754-ae06-241d3b95698e
+		summarizeBy: none
+		sourceColumn: IdLoja
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fVendas-dfeb3bfd-d7bb-42e0-bf2d-8d72a46bd7b4 = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_FactSales = Source{[Schema="dbo",Item="FactSales"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dbo_FactSales,{{"DateKey", type date}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"ETLLoadID", "LoadDate", "UpdateDate", "DimChannel", "DimCurrency", "DimDate", "DimProduct", "DimPromotion", "DimStore","CurrencyKey", "DiscountQuantity", "ReturnAmount", "ReturnQuantity", "TotalCost", "SalesAmount", "DiscountAmount","channelKey"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"DateKey", "Data"}, {"ProductKey", "IdProduto"}, {"UnitCost", "CustoUnitario"}, {"UnitPrice", "PrecoUnitario"}, {"SalesQuantity", "Quantidade"}, {"PromotionKey", "IdPromocao"}, {"SalesKey", "CodigoVenda"}, {"StoreKey", "IdLoja"}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each [Data] < #date(2009, 10, 5)),
+				    #"Filtered Rows1" = Table.SelectRows(#"Filtered Rows", each ([IdProduto] = 1 or [IdProduto] = 2 or [IdProduto] = 5 or [IdProduto] = 6 or [IdProduto] = 14 or [IdProduto] = 15 or [IdProduto] = 20 or [IdProduto] = 23 or [IdProduto] = 29 or [IdProduto] = 32 or [IdProduto] = 34 or [IdProduto] = 37 or [IdProduto] = 39 or [IdProduto] = 45 or [IdProduto] = 47 or [IdProduto] = 54 or [IdProduto] = 57 or [IdProduto] = 69 or [IdProduto] = 73 or [IdProduto] = 77 or [IdProduto] = 83 or [IdProduto] = 90 or [IdProduto] = 93 or [IdProduto] = 102 or [IdProduto] = 104 or [IdProduto] = 109 or [IdProduto] = 120 or [IdProduto] = 122 or [IdProduto] = 124 or [IdProduto] = 127 or [IdProduto] = 129 or [IdProduto] = 132 or [IdProduto] = 138 or [IdProduto] = 147 or [IdProduto] = 150 or [IdProduto] = 154 or [IdProduto] = 156 or [IdProduto] = 165 or [IdProduto] = 171 or [IdProduto] = 173 or [IdProduto] = 178 or [IdProduto] = 189 or [IdProduto] = 192 or [IdProduto] = 196 or [IdProduto] = 203 or [IdProduto] = 223 or [IdProduto] = 224 or [IdProduto] = 229 or [IdProduto] = 241 or [IdProduto] = 243 or [IdProduto] = 255 or [IdProduto] = 257 or [IdProduto] = 260 or [IdProduto] = 266 or [IdProduto] = 270 or [IdProduto] = 273 or [IdProduto] = 274 or [IdProduto] = 278 or [IdProduto] = 282 or [IdProduto] = 283 or [IdProduto] = 284 or [IdProduto] = 292 or [IdProduto] = 294 or [IdProduto] = 304 or [IdProduto] = 305 or [IdProduto] = 309 or [IdProduto] = 317 or [IdProduto] = 322 or [IdProduto] = 330 or [IdProduto] = 340 or [IdProduto] = 345 or [IdProduto] = 346 or [IdProduto] = 353 or [IdProduto] = 368 or [IdProduto] = 373 or [IdProduto] = 378 or [IdProduto] = 382 or [IdProduto] = 386 or [IdProduto] = 388 or [IdProduto] = 389 or [IdProduto] = 393 or [IdProduto] = 397 or [IdProduto] = 400 or [IdProduto] = 409 or [IdProduto] = 418 or [IdProduto] = 421 or [IdProduto] = 424 or [IdProduto] = 435 or [IdProduto] = 436 or [IdProduto] = 440 or [IdProduto] = 443 or [IdProduto] = 448 or [IdProduto] = 450 or [IdProduto] = 453 or [IdProduto] = 459 or [IdProduto] = 460 or [IdProduto] = 469 or [IdProduto] = 482 or [IdProduto] = 486 or [IdProduto] = 492 or [IdProduto] = 497 or [IdProduto] = 504 or [IdProduto] = 510 or [IdProduto] = 513 or [IdProduto] = 515 or [IdProduto] = 519 or [IdProduto] = 521 or [IdProduto] = 525 or [IdProduto] = 534 or [IdProduto] = 536 or [IdProduto] = 543 or [IdProduto] = 550 or [IdProduto] = 552 or [IdProduto] = 555 or [IdProduto] = 563 or [IdProduto] = 564 or [IdProduto] = 570 or [IdProduto] = 574 or [IdProduto] = 575 or [IdProduto] = 584 or [IdProduto] = 591 or [IdProduto] = 597 or [IdProduto] = 599 or [IdProduto] = 604 or [IdProduto] = 606 or [IdProduto] = 608 or [IdProduto] = 609 or [IdProduto] = 611 or [IdProduto] = 618 or [IdProduto] = 621 or [IdProduto] = 622 or [IdProduto] = 630 or [IdProduto] = 643 or [IdProduto] = 649 or [IdProduto] = 658 or [IdProduto] = 660 or [IdProduto] = 664 or [IdProduto] = 666 or [IdProduto] = 672 or [IdProduto] = 682 or [IdProduto] = 683 or [IdProduto] = 690 or [IdProduto] = 693 or [IdProduto] = 696 or [IdProduto] = 703 or [IdProduto] = 710 or [IdProduto] = 711 or [IdProduto] = 716 or [IdProduto] = 717 or [IdProduto] = 721 or [IdProduto] = 724 or [IdProduto] = 727 or [IdProduto] = 743 or [IdProduto] = 744 or [IdProduto] = 752 or [IdProduto] = 754 or [IdProduto] = 757 or [IdProduto] = 763 or [IdProduto] = 766 or [IdProduto] = 767 or [IdProduto] = 769 or [IdProduto] = 779 or [IdProduto] = 785 or [IdProduto] = 787 or [IdProduto] = 790 or [IdProduto] = 798 or [IdProduto] = 813 or [IdProduto] = 816 or [IdProduto] = 825 or [IdProduto] = 826 or [IdProduto] = 831 or [IdProduto] = 834 or [IdProduto] = 842 or [IdProduto] = 848 or [IdProduto] = 851 or [IdProduto] = 860 or [IdProduto] = 868 or [IdProduto] = 879 or [IdProduto] = 885 or [IdProduto] = 889 or [IdProduto] = 896 or [IdProduto] = 897 or [IdProduto] = 904 or [IdProduto] = 907 or [IdProduto] = 909 or [IdProduto] = 929 or [IdProduto] = 932 or [IdProduto] = 937 or [IdProduto] = 942 or [IdProduto] = 949 or [IdProduto] = 953 or [IdProduto] = 954 or [IdProduto] = 958 or [IdProduto] = 968 or [IdProduto] = 976 or [IdProduto] = 977 or [IdProduto] = 985 or [IdProduto] = 992 or [IdProduto] = 993 or [IdProduto] = 995 or [IdProduto] = 1001 or [IdProduto] = 1007 or [IdProduto] = 1011 or [IdProduto] = 1016 or [IdProduto] = 1019 or [IdProduto] = 1028 or [IdProduto] = 1031 or [IdProduto] = 1039 or [IdProduto] = 1044 or [IdProduto] = 1045 or [IdProduto] = 1051 or [IdProduto] = 1054 or [IdProduto] = 1067 or [IdProduto] = 1070 or [IdProduto] = 1072 or [IdProduto] = 1076 or [IdProduto] = 1078 or [IdProduto] = 1081 or [IdProduto] = 1083 or [IdProduto] = 1086 or [IdProduto] = 1096 or [IdProduto] = 1103 or [IdProduto] = 1105 or [IdProduto] = 1109 or [IdProduto] = 1111 or [IdProduto] = 1116 or [IdProduto] = 1117 or [IdProduto] = 1121 or [IdProduto] = 1125 or [IdProduto] = 1133 or [IdProduto] = 1139 or [IdProduto] = 1144 or [IdProduto] = 1148 or [IdProduto] = 1151 or [IdProduto] = 1161 or [IdProduto] = 1168 or [IdProduto] = 1173 or [IdProduto] = 1178 or [IdProduto] = 1180 or [IdProduto] = 1187 or [IdProduto] = 1194 or [IdProduto] = 1197 or [IdProduto] = 1201 or [IdProduto] = 1208 or [IdProduto] = 1209 or [IdProduto] = 1223 or [IdProduto] = 1224 or [IdProduto] = 1231 or [IdProduto] = 1243 or [IdProduto] = 1244 or [IdProduto] = 1246 or [IdProduto] = 1249 or [IdProduto] = 1260 or [IdProduto] = 1266 or [IdProduto] = 1272 or [IdProduto] = 1280 or [IdProduto] = 1285 or [IdProduto] = 1288 or [IdProduto] = 1302 or [IdProduto] = 1303 or [IdProduto] = 1316 or [IdProduto] = 1317 or [IdProduto] = 1320 or [IdProduto] = 1324 or [IdProduto] = 1329 or [IdProduto] = 1340 or [IdProduto] = 1342 or [IdProduto] = 1359 or [IdProduto] = 1363 or [IdProduto] = 1364 or [IdProduto] = 1368 or [IdProduto] = 1373 or [IdProduto] = 1377 or [IdProduto] = 1386 or [IdProduto] = 1391 or [IdProduto] = 1395 or [IdProduto] = 1396 or [IdProduto] = 1406 or [IdProduto] = 1409 or [IdProduto] = 1412 or [IdProduto] = 1413 or [IdProduto] = 1420 or [IdProduto] = 1427 or [IdProduto] = 1435 or [IdProduto] = 1449 or [IdProduto] = 1453 or [IdProduto] = 1456 or [IdProduto] = 1461 or [IdProduto] = 1463 or [IdProduto] = 1473 or [IdProduto] = 1474 or [IdProduto] = 1478 or [IdProduto] = 1480 or [IdProduto] = 1487 or [IdProduto] = 1489 or [IdProduto] = 1490 or [IdProduto] = 1495 or [IdProduto] = 1503 or [IdProduto] = 1508 or [IdProduto] = 1509 or [IdProduto] = 1521 or [IdProduto] = 1523 or [IdProduto] = 1529 or [IdProduto] = 1552 or [IdProduto] = 1572 or [IdProduto] = 1582 or [IdProduto] = 1585 or [IdProduto] = 1586 or [IdProduto] = 1591 or [IdProduto] = 1598 or [IdProduto] = 1601 or [IdProduto] = 1605 or [IdProduto] = 1613 or [IdProduto] = 1617 or [IdProduto] = 1623 or [IdProduto] = 1624 or [IdProduto] = 1629 or [IdProduto] = 1638 or [IdProduto] = 1640 or [IdProduto] = 1650 or [IdProduto] = 1651 or [IdProduto] = 1653 or [IdProduto] = 1656 or [IdProduto] = 1659 or [IdProduto] = 1668 or [IdProduto] = 1670 or [IdProduto] = 1679 or [IdProduto] = 1680 or [IdProduto] = 1691 or [IdProduto] = 1696 or [IdProduto] = 1701 or [IdProduto] = 1705 or [IdProduto] = 1706 or [IdProduto] = 1713 or [IdProduto] = 1714 or [IdProduto] = 1717 or [IdProduto] = 1718 or [IdProduto] = 1723 or [IdProduto] = 1728 or [IdProduto] = 1731 or [IdProduto] = 1738 or [IdProduto] = 1750 or [IdProduto] = 1755 or [IdProduto] = 1757 or [IdProduto] = 1758 or [IdProduto] = 1763 or [IdProduto] = 1769 or [IdProduto] = 1774 or [IdProduto] = 1780 or [IdProduto] = 1782 or [IdProduto] = 1797 or [IdProduto] = 1799 or [IdProduto] = 1804 or [IdProduto] = 1806 or [IdProduto] = 1808 or [IdProduto] = 1812 or [IdProduto] = 1817 or [IdProduto] = 1820 or [IdProduto] = 1824 or [IdProduto] = 1825 or [IdProduto] = 1832 or [IdProduto] = 1834 or [IdProduto] = 1846 or [IdProduto] = 1849 or [IdProduto] = 1852 or [IdProduto] = 1854 or [IdProduto] = 1857 or [IdProduto] = 1860 or [IdProduto] = 1864 or [IdProduto] = 1866 or [IdProduto] = 1868 or [IdProduto] = 1874 or [IdProduto] = 1882 or [IdProduto] = 1888 or [IdProduto] = 1896 or [IdProduto] = 1904 or [IdProduto] = 1912 or [IdProduto] = 1913 or [IdProduto] = 1918 or [IdProduto] = 1920 or [IdProduto] = 1923 or [IdProduto] = 1924 or [IdProduto] = 1932 or [IdProduto] = 1941 or [IdProduto] = 1943 or [IdProduto] = 1945 or [IdProduto] = 1946 or [IdProduto] = 1949 or [IdProduto] = 1950 or [IdProduto] = 1958 or [IdProduto] = 1960 or [IdProduto] = 1964 or [IdProduto] = 1970 or [IdProduto] = 1980 or [IdProduto] = 1982 or [IdProduto] = 1985 or [IdProduto] = 1990 or [IdProduto] = 1996 or [IdProduto] = 1998 or [IdProduto] = 2009 or [IdProduto] = 2011 or [IdProduto] = 2012 or [IdProduto] = 2014 or [IdProduto] = 2018 or [IdProduto] = 2024 or [IdProduto] = 2026 or [IdProduto] = 2031 or [IdProduto] = 2039 or [IdProduto] = 2041 or [IdProduto] = 2043 or [IdProduto] = 2044 or [IdProduto] = 2047 or [IdProduto] = 2054 or [IdProduto] = 2060 or [IdProduto] = 2066 or [IdProduto] = 2078 or [IdProduto] = 2081 or [IdProduto] = 2084 or [IdProduto] = 2088 or [IdProduto] = 2094 or [IdProduto] = 2104 or [IdProduto] = 2112 or [IdProduto] = 2114 or [IdProduto] = 2124 or [IdProduto] = 2127 or [IdProduto] = 2130 or [IdProduto] = 2137 or [IdProduto] = 2138 or [IdProduto] = 2152 or [IdProduto] = 2160 or [IdProduto] = 2161 or [IdProduto] = 2166 or [IdProduto] = 2168 or [IdProduto] = 2177 or [IdProduto] = 2178 or [IdProduto] = 2196 or [IdProduto] = 2198 or [IdProduto] = 2199 or [IdProduto] = 2207 or [IdProduto] = 2212 or [IdProduto] = 2215 or [IdProduto] = 2219 or [IdProduto] = 2230 or [IdProduto] = 2239 or [IdProduto] = 2244 or [IdProduto] = 2247 or [IdProduto] = 2250 or [IdProduto] = 2258 or [IdProduto] = 2265 or [IdProduto] = 2273 or [IdProduto] = 2283 or [IdProduto] = 2293 or [IdProduto] = 2298 or [IdProduto] = 2300 or [IdProduto] = 2303 or [IdProduto] = 2307 or [IdProduto] = 2320 or [IdProduto] = 2321 or [IdProduto] = 2322 or [IdProduto] = 2325 or [IdProduto] = 2332 or [IdProduto] = 2336 or [IdProduto] = 2349 or [IdProduto] = 2352 or [IdProduto] = 2358 or [IdProduto] = 2361 or [IdProduto] = 2363 or [IdProduto] = 2373 or [IdProduto] = 2379 or [IdProduto] = 2380 or [IdProduto] = 2389 or [IdProduto] = 2394 or [IdProduto] = 2396 or [IdProduto] = 2398 or [IdProduto] = 2408 or [IdProduto] = 2409 or [IdProduto] = 2411 or [IdProduto] = 2413 or [IdProduto] = 2422 or [IdProduto] = 2427 or [IdProduto] = 2430 or [IdProduto] = 2432 or [IdProduto] = 2439 or [IdProduto] = 2440 or [IdProduto] = 2447 or [IdProduto] = 2448 or [IdProduto] = 2451 or [IdProduto] = 2455 or [IdProduto] = 2463 or [IdProduto] = 2465 or [IdProduto] = 2471 or [IdProduto] = 2487 or [IdProduto] = 2488 or [IdProduto] = 2502 or [IdProduto] = 2506 or [IdProduto] = 2516))
+				in
+				    #"Filtered Rows1"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

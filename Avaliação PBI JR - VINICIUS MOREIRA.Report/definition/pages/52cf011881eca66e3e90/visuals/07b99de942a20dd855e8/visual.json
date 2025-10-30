@@ -1,0 +1,418 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "07b99de942a20dd855e8",
+  "position": {
+    "x": 11,
+    "y": 71,
+    "z": 0,
+    "height": 607,
+    "width": 1269
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "Ano"
+                }
+              },
+              "queryRef": "dCalendario.Ano",
+              "nativeQueryRef": "Ano",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "AnoMês"
+                }
+              },
+              "queryRef": "dCalendario.AnoMês",
+              "nativeQueryRef": "AnoMês",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Número de Vendas"
+                }
+              },
+              "queryRef": "fVendas.Número de Vendas",
+              "nativeQueryRef": "Número de Vendas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Volume vendido"
+                }
+              },
+              "queryRef": "fVendas.Volume vendido",
+              "nativeQueryRef": "Volume vendido"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Vendas Brutas"
+                }
+              },
+              "queryRef": "fVendas.Vendas brutas",
+              "nativeQueryRef": "Vendas brutas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Custo total"
+                }
+              },
+              "queryRef": "fVendas.Custo total",
+              "nativeQueryRef": "Custo total"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Preço médio de venda"
+                }
+              },
+              "queryRef": "fVendas.Preço médio de venda",
+              "nativeQueryRef": "Preço médio de venda"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Desconto total"
+                }
+              },
+              "queryRef": "fVendas.Desconto total",
+              "nativeQueryRef": "Desconto total"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Desconto total auditado"
+                }
+              },
+              "queryRef": "fVendas.Desconto total auditado",
+              "nativeQueryRef": "Desconto total auditado"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Vendas líquidas"
+                }
+              },
+              "queryRef": "fVendas.Vendas líquidas",
+              "nativeQueryRef": "Vendas líquidas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Média de vendas brutas diárias"
+                }
+              },
+              "queryRef": "fVendas.Média de vendas brutas diárias",
+              "nativeQueryRef": "Média de vendas brutas diárias"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dCalendario"
+                  }
+                },
+                "Property": "Ano"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dCalendario"
+                  }
+                },
+                "Property": "AnoMês"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "dCalendario.Ano"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "Ano"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "dCalendario.AnoMês"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'2009'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'2008'"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
+      }
+    ],
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "titleAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Número de Vendas"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Volume vendido"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Vendas brutas"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Custo total"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Preço médio de venda"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Desconto total"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Desconto total auditado"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Vendas líquidas"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "fVendas.Média de vendas brutas diárias"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "metadata": "dCalendario.Ano"
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "bandedRowHeaders": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "rowHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "lockAspect": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

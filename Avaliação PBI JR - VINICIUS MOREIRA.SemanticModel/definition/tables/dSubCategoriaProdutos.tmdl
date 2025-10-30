@@ -1,0 +1,48 @@
+table dSubCategoriaProdutos
+	lineageTag: c3238318-a707-4e43-a850-3ad6888db011
+
+	column IdSubcategoria
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a4e50ec-cd8c-40bd-a651-df2107e31f63
+		summarizeBy: none
+		sourceColumn: IdSubcategoria
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcategoria
+		dataType: string
+		lineageTag: 3753dfe3-f825-495b-ae62-e45074d9b90a
+		summarizeBy: none
+		sourceColumn: Subcategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column IdCategoria
+		dataType: int64
+		formatString: 0
+		lineageTag: fa46ef7b-6ea7-4e79-b03e-083a28741583
+		summarizeBy: none
+		sourceColumn: IdCategoria
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dSubCategoriaProdutos-1220e1f8-bd3e-4f46-9ddf-2f99a92e9f53 = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_DimProductSubcategory = Source{[Schema="dbo",Item="DimProductSubcategory"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimProductSubcategory,{"LoadDate", "UpdateDate", "DimProduct", "DimProductCategory", "ETLLoadID", "ProductSubcategoryLabel", "ProductSubcategoryDescription"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"ProductSubcategoryKey", "IdSubcategoria"}, {"ProductCategoryKey", "IdCategoria"}, {"ProductSubcategoryName", "Subcategoria"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

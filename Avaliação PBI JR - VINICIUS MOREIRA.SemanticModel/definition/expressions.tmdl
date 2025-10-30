@@ -1,0 +1,14 @@
+expression Server = "DESKTOP-K42ON1A\SQLEXPRESS" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: c4083046-234b-4955-a8da-870a7183abd4
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression Database = "ContosoRetailDW" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: ff97c6f1-27a8-4343-bbf0-e1871fc364b6
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

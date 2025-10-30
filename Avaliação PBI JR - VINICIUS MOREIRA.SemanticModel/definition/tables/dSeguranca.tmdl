@@ -1,0 +1,29 @@
+table dSeguranca
+	lineageTag: ad4e261d-18f4-48db-a990-35633fb811b9
+
+	column Emails
+		dataType: string
+		lineageTag: 024b6a55-4a2d-4224-aa6e-bfec3906d429
+		summarizeBy: none
+		sourceColumn: Emails
+
+		annotation SummarizationSetBy = Automatic
+
+	column Pais
+		dataType: string
+		lineageTag: e63c1657-8b5b-471d-9f31-ab740a0b9d56
+		summarizeBy: none
+		sourceColumn: Pais
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dSeguranca = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WSiwtLilKzMlMdMhKTCxKzs8rLs0p0UvOz9VLKlLSUXKESSvF6kQrJSfmJabgUOkMlgMrSytKzEtOxa7MDSynFBsLAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Emails = _t, Pais = _t])
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+

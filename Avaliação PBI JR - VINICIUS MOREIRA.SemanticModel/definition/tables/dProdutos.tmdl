@@ -1,0 +1,74 @@
+table dProdutos
+	lineageTag: 923f4c20-2de3-48c5-b3ca-8cfa9bd9938d
+
+	column IdProduto
+		dataType: int64
+		formatString: 0
+		lineageTag: c0371d72-4ffd-44a2-b409-c199c357e608
+		summarizeBy: none
+		sourceColumn: IdProduto
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Produto
+		dataType: string
+		lineageTag: 34310855-c2cc-48e4-8760-0a2d15ba7b67
+		summarizeBy: none
+		sourceColumn: Produto
+
+		annotation SummarizationSetBy = Automatic
+
+	column IdSubcategoria
+		dataType: int64
+		formatString: 0
+		lineageTag: 76bd6724-28d5-447c-9664-98be632a6c58
+		summarizeBy: none
+		sourceColumn: IdSubcategoria
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca
+		dataType: string
+		lineageTag: 794e2ab6-551c-4885-917b-1d1d7662ead2
+		summarizeBy: none
+		sourceColumn: Marca
+
+		annotation SummarizationSetBy = Automatic
+
+	column Classificacao
+		dataType: string
+		lineageTag: 531964fd-1ec0-405f-8f12-ef9e72002ff8
+		summarizeBy: none
+		sourceColumn: Classificacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cor
+		dataType: string
+		lineageTag: 0daff38d-ec1d-47fa-9fc3-a11a817280dd
+		summarizeBy: none
+		sourceColumn: Cor
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dProdutos-bc4f1ac1-c2b1-46fe-831b-0498102853f4 = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_DimProduct = Source{[Schema="dbo",Item="DimProduct"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimProduct,{"ETLLoadID", "LoadDate", "UpdateDate", "DimProductSubcategory", "FactInventory", "FactOnlineSales", "FactSales", "FactSalesQuota", "StyleName", "StyleID", "Manufacturer", "ClassID", "ColorID", "ProductURL", "ImageURL", "ProductDescription", "SizeUnitMeasureID", "Size", "SizeRange", "Weight", "WeightUnitMeasureID", "StockTypeID", "UnitOfMeasureID", "UnitOfMeasureName", "StockTypeName", "StopSaleDate", "Status", "ProductLabel", "AvailableForSaleDate", "UnitCost", "UnitPrice"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"ProductKey", "IdProduto"}, {"ProductName", "Produto"}, {"ProductSubcategoryKey", "IdSubcategoria"}, {"BrandName", "Marca"}, {"ClassName", "Classificacao"}, {"ColorName", "Cor"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

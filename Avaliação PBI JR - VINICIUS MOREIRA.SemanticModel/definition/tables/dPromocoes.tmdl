@@ -1,0 +1,116 @@
+table dPromocoes
+	lineageTag: b2103462-9e1e-4fc7-b69e-b0a5cd25759c
+
+	column IdPromocao
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fc2a562-4b59-44d0-be06-c7b9c3566170
+		summarizeBy: none
+		sourceColumn: IdPromocao
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoPromocao
+		dataType: string
+		lineageTag: e4b057a3-0609-4a30-a928-dd27c220cbfe
+		summarizeBy: none
+		sourceColumn: CodigoPromocao
+
+		annotation SummarizationSetBy = Automatic
+
+	column Promocao
+		dataType: string
+		lineageTag: 4b223b50-79ac-4a7a-8a83-5f4a839c4bd3
+		summarizeBy: none
+		sourceColumn: Promocao
+
+		annotation SummarizationSetBy = Automatic
+
+	column PercentualDesconto
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 6df33329-4f11-4480-8802-584ed662723b
+		summarizeBy: none
+		sourceColumn: PercentualDesconto
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoPromocao
+		dataType: string
+		lineageTag: d9481f3e-8401-4f6f-b851-f325ac678136
+		summarizeBy: none
+		sourceColumn: TipoPromocao
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataInicio
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 75afea08-5e61-47e1-9886-64c4b9f30850
+		summarizeBy: none
+		sourceColumn: DataInicio
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column DataTermino
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 1e6407bd-1bbc-458a-99e7-c13c30886dc0
+		summarizeBy: none
+		sourceColumn: DataTermino
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column PercentualDescontoNum = ```
+			
+			VALUE(
+			    SUBSTITUTE(
+			        SUBSTITUTE(
+			            dPromocoes[PercentualDesconto], 
+			            ",", 
+			            "."
+			        ), 
+			        "%", 
+			        ""
+			    )
+			) 
+			```
+		lineageTag: 4b16e73d-023b-42d5-a2bc-418c36cf53bf
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dPromocoes-d483ccf2-0d7a-4569-a4a1-021965ba547f = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_DimPromotion = Source{[Schema="dbo",Item="DimPromotion"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimPromotion,{"FactOnlineSales", "FactSales", "ETLLoadID", "LoadDate", "UpdateDate","PromotionDescription", "MinQuantity", "MaxQuantity","PromotionCategory"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"PromotionKey", "IdPromocao"}, {"PromotionLabel", "CodigoPromocao"}, {"PromotionName", "Promocao"}, {"DiscountPercent", "PercentualDesconto"}, {"PromotionType", "TipoPromocao"},{"StartDate", "DataInicio"}, {"EndDate", "DataTermino"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"DataInicio", type date}, {"DataTermino", type date}})
+				in
+				    #"Changed Type"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

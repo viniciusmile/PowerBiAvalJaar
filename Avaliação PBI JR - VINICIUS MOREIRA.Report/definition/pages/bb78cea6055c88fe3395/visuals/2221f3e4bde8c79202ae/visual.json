@@ -1,0 +1,52 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "2221f3e4bde8c79202ae",
+  "position": {
+    "x": 831,
+    "y": 530,
+    "z": 4000,
+    "height": 142,
+    "width": 449,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCalendario"
+                    }
+                  },
+                  "Property": "Tri"
+                }
+              },
+              "queryRef": "dCalendario.Tri",
+              "nativeQueryRef": "Tri"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "% Share vendas brutas Genérico"
+                }
+              },
+              "queryRef": "fVendas.% Share vendas brutas Genérico",
+              "nativeQueryRef": "% Share vendas brutas Genérico"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

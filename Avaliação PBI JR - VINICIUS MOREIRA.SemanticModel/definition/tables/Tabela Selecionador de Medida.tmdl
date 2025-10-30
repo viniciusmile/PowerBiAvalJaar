@@ -1,0 +1,40 @@
+table 'Tabela Selecionador de Medida'
+	lineageTag: 36696382-71f2-4068-8cbe-0a895600e429
+
+	measure 'Medida Selecionada' = ```
+			
+			VAR SelecaoDoUsuario = 
+			    SELECTEDVALUE(
+			        'Tabela Selecionador de Medida'[Medida], 
+			        "Vendas brutas" // Define "Vendas brutas" como o padrão
+			    )
+			RETURN
+			    SWITCH(
+			        SelecaoDoUsuario,
+			        "Vendas brutas", [Vendas brutas],
+			        "Custo total", [Custo total]
+			    )
+			```
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 554fdc8f-f0ab-4c2d-b24b-69f390b06bd1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column Medida
+		dataType: string
+		lineageTag: 17269510-06e5-4296-98c9-a0095c827fda
+		summarizeBy: none
+		sourceColumn: Medida
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Tabela Selecionador de Medida' = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WCkvNS0ksVkgqKi1JLFaK1YlWci4tLslXKMkvScxRio0FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Medida = _t])
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+

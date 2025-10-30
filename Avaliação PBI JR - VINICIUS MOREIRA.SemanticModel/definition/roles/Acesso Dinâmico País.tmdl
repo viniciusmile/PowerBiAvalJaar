@@ -1,0 +1,14 @@
+role 'Acesso Dinâmico País'
+	modelPermission: read
+
+	tablePermission dLocalidades = ```
+			[Pais] = 
+			LOOKUPVALUE(
+			    'dSeguranca'[Pais],
+			    'dSeguranca'[Emails],
+			    USERPRINCIPALNAME()
+			)
+			```
+
+	annotation PBI_Id = 1b5d1c7c13b84f118cf645a678c1e412
+

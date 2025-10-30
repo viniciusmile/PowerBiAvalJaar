@@ -1,0 +1,32 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Server","Database","dProdutos","dCategoriaProdutos","dSubCategoriaProdutos","dIconesProdutos","dPromocoes","dLojas","dLocalidades","fVendas","dCalendario","dSeguranca","Tabela Selecionador de Medida"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table dProdutos
+ref table dCategoriaProdutos
+ref table dSubCategoriaProdutos
+ref table fVendas
+ref table dIconesProdutos
+ref table dPromocoes
+ref table dLojas
+ref table dLocalidades
+ref table dCalendario
+ref table dSeguranca
+ref table 'Tabela Selecionador de Medida'
+ref table 'Analisar Por'
+
+ref role 'Acesso EUA'
+ref role 'Acesso Dinâmico País'
+
+ref cultureInfo en-US
+

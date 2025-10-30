@@ -1,0 +1,49 @@
+table 'Analisar Por'
+	lineageTag: d80a66d0-a580-40a5-a312-6e3ceb688e88
+
+	column 'Analisar Por'
+		lineageTag: 67769394-d2ef-4081-a774-73f3631cd8d2
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Analisar Por Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Analisar Por Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Analisar Por Campos'
+		isHidden
+		lineageTag: 304a6f45-57f0-4c04-9260-960164f05383
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Analisar Por Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Analisar Por Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: 532e919a-ca93-4717-bd0a-225c1fdd7c3e
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Analisar Por' = calculated
+		mode: import
+		source =
+				{
+				    ("Pais", NAMEOF('dLocalidades'[Pais]), 0),
+				    ("IdLoja", NAMEOF('fVendas'[IdLoja]), 1),
+				    ("Categoria", NAMEOF('dCategoriaProdutos'[Categoria]), 2)
+				}
+
+	annotation PBI_Id = 7888da537d1744debd393b2615e2a030
+

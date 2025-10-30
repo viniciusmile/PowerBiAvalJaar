@@ -1,0 +1,178 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 68.431996219634456,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 738.61516999361731,
+            "y": 341.09103909451352
+          },
+          "nodeIndex": "fVendas",
+          "nodeLineageTag": "248dc703-3afe-472c-80ee-ed37913eabce",
+          "size": {
+            "height": 287.84757076936239,
+            "width": 218.21144290667127
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1112.1174397724033,
+            "y": 339.26655074435337
+          },
+          "nodeIndex": "dLojas",
+          "nodeLineageTag": "894d32a7-7ec3-4372-95a6-5b092b53c81f",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 521.02412400142146,
+            "y": 773.64596070160871
+          },
+          "nodeIndex": "dPromocoes",
+          "nodeLineageTag": "b2103462-9e1e-4fc7-b69e-b0a5cd25759c",
+          "size": {
+            "height": 295.76751578774531,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 132.40103616407538,
+            "y": 481.52630875717921
+          },
+          "nodeIndex": "dCategoriaProdutos",
+          "nodeLineageTag": "aab3ae24-47b0-4871-b800-d9ec7ae53b28",
+          "size": {
+            "height": 137.82073625638992,
+            "width": 216.58294527358561
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 718.37570982151647,
+            "y": 0
+          },
+          "nodeIndex": "dSubCategoriaProdutos",
+          "nodeLineageTag": "c3238318-a707-4e43-a850-3ad6888db011",
+          "size": {
+            "height": 159.35041648585798,
+            "width": 216.51991017493597
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 298.06516988239764,
+            "y": 133.88868825580653
+          },
+          "nodeIndex": "dProdutos",
+          "nodeLineageTag": "923f4c20-2de3-48c5-b3ca-8cfa9bd9938d",
+          "size": {
+            "height": 229.08118109250745,
+            "width": 216.43093819166913
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 143.86994614728732,
+            "y": 780.15835125509057
+          },
+          "nodeIndex": "dIconesProdutos",
+          "nodeLineageTag": "34ad86f5-9706-4417-a1d8-71757fcc23c0",
+          "size": {
+            "height": 157.27066922986251,
+            "width": 186.99944966341087
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 1490.7412096213129,
+            "y": 379.60461766579675
+          },
+          "nodeIndex": "dLocalidades",
+          "nodeLineageTag": "0e602a7d-5785-4219-a6d8-ea055835c134",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 948.85139685140723,
+            "y": 764.6531751498286
+          },
+          "nodeIndex": "dCalendario",
+          "nodeLineageTag": "f7d4f9a7-530f-43ed-9232-38b0adb60bfa",
+          "size": {
+            "height": 177.92745965353973,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 1288.2789756252157,
+            "y": 847.08271745266654
+          },
+          "nodeIndex": "dSeguranca",
+          "nodeLineageTag": "ad4e261d-18f4-48db-a990-35633fb811b9",
+          "size": {
+            "height": 145,
+            "width": 236.97530418346219
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 1642.3401734572376,
+            "y": 482.706738244677
+          },
+          "nodeIndex": "Tabela Selecionador de Medida",
+          "nodeLineageTag": "36696382-71f2-4068-8cbe-0a895600e429",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1793.9391372931623,
+            "y": 458.706738244677
+          },
+          "nodeIndex": "Analisar Por",
+          "nodeLineageTag": "d80a66d0-a580-40a5-a312-6e3ceb688e88",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 67.220017741937085,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

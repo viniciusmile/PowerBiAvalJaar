@@ -1,0 +1,82 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "810c4e2fa0180714fcd5",
+  "position": {
+    "x": 210.64989517819706,
+    "y": 14.758909853249476,
+    "z": 0,
+    "height": 280.41928721174,
+    "width": 527.29559748427675
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dPromocoes"
+                    }
+                  },
+                  "Property": "Promocao"
+                }
+              },
+              "queryRef": "dPromocoes.Promocao",
+              "nativeQueryRef": "Promocao"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Vendas líquidas"
+                }
+              },
+              "queryRef": "fVendas.Vendas líquidas",
+              "nativeQueryRef": "Vendas líquidas"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fVendas"
+                    }
+                  },
+                  "Property": "Ranking promoções"
+                }
+              },
+              "queryRef": "fVendas.Ranking promoções",
+              "nativeQueryRef": "Ranking promoções"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fVendas"
+                  }
+                },
+                "Property": "Ranking promoções"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

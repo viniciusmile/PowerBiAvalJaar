@@ -1,0 +1,75 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "bb78cea6055c88fe3395",
+  "displayName": "Exercício 3",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "pageBinding": {
+    "name": "f71f0dafc2940e961b41",
+    "type": "Default",
+    "parameters": []
+  },
+  "visualInteractions": [
+    {
+      "source": "28be00e7b5aa75fce148",
+      "target": "d00b01229246510a8bf4",
+      "type": "NoFilter"
+    },
+    {
+      "source": "a666f9ce7aa55e47884b",
+      "target": "28be00e7b5aa75fce148",
+      "type": "NoFilter"
+    },
+    {
+      "source": "a666f9ce7aa55e47884b",
+      "target": "00fbb4565177a91ff8fe",
+      "type": "NoFilter"
+    },
+    {
+      "source": "a666f9ce7aa55e47884b",
+      "target": "d00b01229246510a8bf4",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d00b01229246510a8bf4",
+      "target": "00fbb4565177a91ff8fe",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d00b01229246510a8bf4",
+      "target": "28be00e7b5aa75fce148",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d00b01229246510a8bf4",
+      "target": "a666f9ce7aa55e47884b",
+      "type": "NoFilter"
+    },
+    {
+      "source": "28be00e7b5aa75fce148",
+      "target": "a666f9ce7aa55e47884b",
+      "type": "NoFilter"
+    },
+    {
+      "source": "28be00e7b5aa75fce148",
+      "target": "2221f3e4bde8c79202ae",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d00b01229246510a8bf4",
+      "target": "2221f3e4bde8c79202ae",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d00b01229246510a8bf4",
+      "target": "b2bbfc26165950e3fac6",
+      "type": "NoFilter"
+    },
+    {
+      "source": "28be00e7b5aa75fce148",
+      "target": "b2bbfc26165950e3fac6",
+      "type": "NoFilter"
+    }
+  ]
+}

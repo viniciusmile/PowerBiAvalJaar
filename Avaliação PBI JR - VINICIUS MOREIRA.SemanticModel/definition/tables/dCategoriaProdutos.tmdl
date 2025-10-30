@@ -1,0 +1,37 @@
+table dCategoriaProdutos
+	lineageTag: aab3ae24-47b0-4871-b800-d9ec7ae53b28
+
+	column IdCategoria
+		dataType: int64
+		formatString: 0
+		lineageTag: 51913211-e7b4-4aea-bb26-35ef9e6f8d06
+		summarizeBy: none
+		sourceColumn: IdCategoria
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: 6ac7de56-d861-4294-a6b4-fbc3c98f7c4a
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCategoriaProdutos-861c6d37-856f-4995-91d3-b20968ce3370 = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(Server, Database),
+				    dbo_DimProductCategory = Source{[Schema="dbo",Item="DimProductCategory"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimProductCategory,{"ETLLoadID", "LoadDate", "UpdateDate", "DimProductSubcategory", "FactStrategyPlan", "ProductCategoryLabel", "ProductCategoryDescription"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"ProductCategoryName", "Categoria"}, {"ProductCategoryKey", "IdCategoria"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
